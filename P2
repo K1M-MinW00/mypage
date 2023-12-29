@@ -1,0 +1,65 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <cmath>
+#include <unordered_map>
+
+using namespace std;
+
+int main()
+{
+    // ios::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // cout.tie(NULL);
+    
+    cout << "당신의 학번(번호)을 입력하세요 : ";
+    
+    string target;
+    cin >> target;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    cout << "DB 를 입력하세요 : (Ex : 학번 점수)" << endl;
+
+    string line, ID, tmp;
+    float score,avg=0;
+    unordered_map<string, float> db;
+
+    while (getline(cin, line))
+    {
+        if (line == "END")
+        {
+            break;
+        }
+        auto spacePos = find(line.begin(), line.end(), ' ');
+
+        string ID(line.begin(), spacePos);
+        string tmp(spacePos + 1, line.end());
+        score = stof(tmp);
+        avg += score;
+        db.insert(make_pair(ID,score));
+    }
+
+    int n = db.size();
+    avg /= n;
+    cout << endl << "강의에 수강한 인원은 총 " << n << " 명, " << "평균은 " << avg << "점입니다." << endl;
+
+
+    vector<pair<string, float>> vec(db.begin(), db.end());
+    sort(vec.begin(), vec.end(), [](const pair<std::string, float>& a, const pair<std::string, float>& b) {
+    return a.second > b.second;});
+
+    auto it = find_if(vec.begin(), vec.end(), [&target](const pair<string, float>& pair) {
+        return pair.first == target;
+    });
+
+    if (it != vec.end()) {
+        cout << "나의 등수는 " << distance(vec.begin(),it)+1 << " 등이고, 점수는 " << it->second << " 점 입니다." << endl;
+    } else {
+        cout << target << "와 같은 학번(번호)을 찾을 수 없습니다." << endl;
+    }
+
+
+
+    return 0;
+}
